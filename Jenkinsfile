@@ -2,7 +2,11 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "flowtrack"
+        REGISTRY = "docker.io/raminasser07"
+        APP_NAME = "flowtrack"
+        VERSION = "${BUILD_NUMBER}"
+        BACKEND_IMAGE = "${REGISTRY}/${APP_NAME}-backend:${VERSION}"
+        FRONTEND_IMAGE = "${REGISTRY}/${APP_NAME}-frontend:${VERSION}"
         DEPLOY_DIR = "/opt/finance_tracking"
     }
 
@@ -16,9 +20,42 @@ pipeline {
             }
         }
 
-        stage('Build Image') {
+        stage('Login to DockerHub') {
             steps {
-                sh "docker build -t ${IMAGE_NAME}:latest ."
+                withCredentials([usernamePassword(
+                    credentialsId: 'flowtrack_dockerhub',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh """
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    """
+                }
+            }
+        }
+
+        stage('Build Backend Image') {
+            steps {
+                sh """
+                    docker build -t ${BACKEND_IMAGE} ./backend
+                """
+            }
+        }
+
+        stage('Build Frontend Image') {
+            steps {
+                sh """
+                    docker build -t ${FRONTEND_IMAGE} ./frontend
+                """
+            }
+        }
+
+        stage('Push Images') {
+            steps {
+                sh """
+                    docker push ${BACKEND_IMAGE}
+                    docker push ${FRONTEND_IMAGE}
+                """
             }
         }
 
@@ -26,12 +63,20 @@ pipeline {
             steps {
                 sh """
                     cd ${DEPLOY_DIR}
-                    docker compose down
+                    docker compose pull
                     docker compose up -d
                 """
             }
         }
 
     }
-    
+
+    post {
+        success {
+            echo "✅ Pipeline completed successfully!"
+        }
+        failure {
+            echo "❌ Pipeline failed!"
+        }
+    }
 }

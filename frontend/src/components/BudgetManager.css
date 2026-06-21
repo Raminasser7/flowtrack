@@ -1,0 +1,216 @@
+.budget-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ─── Form Card ─────────────────────────────────────────────────────────────── */
+.budget-form-card {
+  background: var(--card-bg, #1e1e2e);
+  border: 1px solid var(--border, rgba(255,255,255,0.08));
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+}
+
+.budget-form-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary, #aaa);
+  margin: 0 0 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.budget-form-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.budget-select {
+  flex: 1;
+  min-width: 160px;
+  background: var(--input-bg, rgba(255,255,255,0.06));
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 8px;
+  color: var(--text, #fff);
+  padding: 0.55rem 0.75rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.budget-select option {
+  background: #1e1e2e;
+}
+
+.budget-amount-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--input-bg, rgba(255,255,255,0.06));
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 8px;
+  padding: 0 0.75rem;
+  min-width: 140px;
+}
+
+.budget-currency {
+  color: var(--text-secondary, #aaa);
+  font-size: 0.95rem;
+  margin-right: 0.4rem;
+}
+
+.budget-amount-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text, #fff);
+  font-size: 0.9rem;
+  padding: 0.55rem 0;
+  width: 100%;
+}
+
+.budget-save-btn {
+  background: var(--accent, #7c6af7);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+.budget-save-btn:hover { opacity: 0.85; }
+.budget-save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.budget-error {
+  color: #f87171;
+  font-size: 0.82rem;
+  margin-top: 0.6rem;
+}
+
+.budget-hint {
+  color: var(--text-secondary, #aaa);
+  font-size: 0.82rem;
+  margin-top: 0.6rem;
+}
+
+/* ─── States ─────────────────────────────────────────────────────────────────── */
+.budget-loading,
+.budget-empty {
+  text-align: center;
+  color: var(--text-secondary, #aaa);
+  padding: 2rem;
+  font-size: 0.9rem;
+}
+
+/* ─── Budget List ────────────────────────────────────────────────────────────── */
+.budget-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.budget-item {
+  background: var(--card-bg, #1e1e2e);
+  border: 1px solid var(--border, rgba(255,255,255,0.08));
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  transition: border-color 0.2s;
+}
+
+.budget-item.warning { border-color: rgba(251, 191, 36, 0.4); }
+.budget-item.over    { border-color: rgba(248, 113, 113, 0.5); }
+
+.budget-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.budget-item-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.budget-cat-icon { font-size: 1.4rem; }
+
+.budget-cat-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text, #fff);
+}
+
+.budget-amounts {
+  font-size: 0.82rem;
+  margin-top: 0.15rem;
+}
+
+.spent-amt   { color: var(--text, #fff); font-weight: 600; }
+.budget-sep  { color: var(--text-secondary, #aaa); }
+.budget-amt  { color: var(--text-secondary, #aaa); }
+
+.budget-item-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ─── Badges ─────────────────────────────────────────────────────────────────── */
+.budget-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.budget-badge.ok      { background: rgba(52,211,153,0.15); color: #34d399; }
+.budget-badge.warning { background: rgba(251,191,36,0.15);  color: #fbbf24; }
+.budget-badge.over    { background: rgba(248,113,113,0.15); color: #f87171; }
+
+.budget-delete-btn {
+  background: transparent;
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  color: var(--text-secondary, #aaa);
+  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.budget-delete-btn:hover {
+  background: rgba(248,113,113,0.15);
+  color: #f87171;
+  border-color: rgba(248,113,113,0.4);
+}
+
+/* ─── Progress Bar ───────────────────────────────────────────────────────────── */
+.budget-bar-track {
+  height: 6px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.budget-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.5s ease;
+}
+
+.budget-bar-fill.ok      { background: #34d399; }
+.budget-bar-fill.warning { background: #fbbf24; }
+.budget-bar-fill.over    { background: #f87171; }

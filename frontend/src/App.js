@@ -3,6 +3,7 @@ import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import AddTransaction from "./components/AddTransaction";
 import TransactionList from "./components/TransactionList";
+import BudgetManager from "./components/BudgetManager";
 import "./App.css";
 
 const API = process.env.REACT_APP_API_URL || "";
@@ -33,11 +34,7 @@ export default function App() {
         fetch(`${API}/api/transactions?limit=100`, { headers: authHeaders() }),
       ]);
 
-      // لو الـ token انتهت صلاحيته → logout
-      if (sumRes.status === 401) {
-        handleLogout();
-        return;
-      }
+      if (sumRes.status === 401) { handleLogout(); return; }
 
       const sumData = await sumRes.json();
       const txData = await txRes.json();
@@ -51,11 +48,7 @@ export default function App() {
   }, [token, authHeaders]);
 
   useEffect(() => {
-    if (token) {
-      fetchData();
-    } else {
-      setLoading(false);
-    }
+    if (token) { fetchData(); } else { setLoading(false); }
   }, [token, fetchData]);
 
   // ─── Login / Logout ──────────────────────────────────────────────────────────
@@ -94,9 +87,7 @@ export default function App() {
   };
 
   // ─── Render ──────────────────────────────────────────────────────────────────
-  if (!token) {
-    return <AuthPage onLogin={handleLogin} />;
-  }
+  if (!token) return <AuthPage onLogin={handleLogin} />;
 
   if (loading) {
     return (
@@ -106,6 +97,13 @@ export default function App() {
       </div>
     );
   }
+
+  const NAV_TABS = [
+    { id: "dashboard",    label: "Overview" },
+    { id: "transactions", label: "History"  },
+    { id: "budgets",      label: "Budgets"  },
+    { id: "add",          label: "+ Add"    },
+  ];
 
   return (
     <div className="app">
@@ -117,38 +115,29 @@ export default function App() {
           </div>
 
           <nav className="nav">
-            {["dashboard", "transactions", "add"].map((tab) => (
+            {NAV_TABS.map((tab) => (
               <button
-                key={tab}
-                className={`nav-btn ${activeTab === tab ? "active" : ""}`}
-                onClick={() => setActiveTab(tab)}
+                key={tab.id}
+                className={`nav-btn ${activeTab === tab.id ? "active" : ""}`}
+                onClick={() => setActiveTab(tab.id)}
               >
-                {tab === "dashboard" && "Overview"}
-                {tab === "transactions" && "History"}
-                {tab === "add" && "+ Add"}
+                {tab.label}
               </button>
             ))}
           </nav>
 
           <div className="header-user">
             <span className="user-badge">@{username}</span>
-            <button className="logout-btn" onClick={handleLogout} title="Logout">
-              ⏻
-            </button>
+            <button className="logout-btn" onClick={handleLogout} title="Logout">⏻</button>
           </div>
         </div>
       </header>
 
       <main className="main">
-        {activeTab === "dashboard" && (
-          <Dashboard summary={summary} transactions={transactions} />
-        )}
-        {activeTab === "transactions" && (
-          <TransactionList transactions={transactions} onDelete={handleDelete} />
-        )}
-        {activeTab === "add" && (
-          <AddTransaction onAdd={handleAdd} onSuccess={() => setActiveTab("dashboard")} />
-        )}
+        {activeTab === "dashboard"    && <Dashboard summary={summary} transactions={transactions} />}
+        {activeTab === "transactions" && <TransactionList transactions={transactions} onDelete={handleDelete} />}
+        {activeTab === "budgets"      && <BudgetManager token={token} />}
+        {activeTab === "add"          && <AddTransaction onAdd={handleAdd} onSuccess={() => setActiveTab("dashboard")} />}
       </main>
     </div>
   );

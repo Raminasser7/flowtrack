@@ -61,6 +61,7 @@ const transactionsRouter = require("./routes/transactions");
 app.use("/api/auth", authRouter);
 app.use("/api/transactions", transactionsRouter);
 app.use("/api/summary", require("./routes/summary"));
+app.use("/api/budgets", require("./routes/budgets"));
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
