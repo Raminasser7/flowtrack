@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:15.3
+    container_name: finance_tracking_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: finance_user
+      POSTGRES_PASSWORD: finance_password
+      POSTGRES_DB: auth_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U finance_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend:
+    build: ./backend
+    container_name: finance_tracking_backend
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: finance_user
+      DB_PASSWORD: finance_password
+      AUTH_DB: auth_db
+      PORT: 5000
+      JWT_SECRET: super_secret_change_this_in_production
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: ./frontend
+    container_name: finance_tracking_web
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
