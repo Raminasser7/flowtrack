@@ -5,8 +5,8 @@ pipeline {
         REGISTRY = "docker.io/raminasser07"
         APP_NAME = "flowtrack"
         VERSION = "${BUILD_NUMBER}"
-        BACKEND_IMAGE = "${REGISTRY}/${APP_NAME}-backend:${VERSION}"
-        FRONTEND_IMAGE = "${REGISTRY}/${APP_NAME}-frontend:${VERSION}"
+        BACKEND_IMAGE = "${REGISTRY}/${APP_NAME}-backend:latest"
+        FRONTEND_IMAGE = "${REGISTRY}/${APP_NAME}-frontend:latest"
         DEPLOY_DIR = "/opt/finance_tracking"
     }
 
