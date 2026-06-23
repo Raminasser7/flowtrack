@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY = "docker.io/raminasser07"
+        //REGISTRY = "docker.io/raminasser07"
         APP_NAME = "flowtrack"
-        VERSION = "${BUILD_NUMBER}"
-        BACKEND_IMAGE = "${REGISTRY}/${APP_NAME}-backend:latest"
-        FRONTEND_IMAGE = "${REGISTRY}/${APP_NAME}-frontend:latest"
+        //VERSION = "${BUILD_NUMBER}"
+        BACKEND_IMAGE = "${APP_NAME}-backend:latest"
+        FRONTEND_IMAGE = "${APP_NAME}-frontend:latest"
         DEPLOY_DIR = "/opt/finance_tracking"
     }
 
@@ -20,6 +20,7 @@ pipeline {
             }
         }
 
+        /*
         stage('Login to DockerHub') {
             steps {
                 withCredentials([usernamePassword(
@@ -33,7 +34,7 @@ pipeline {
                 }
             }
         }
-
+        */
         stage('Build Backend Image') {
             steps {
                 sh """
@@ -50,6 +51,7 @@ pipeline {
             }
         }
 
+        /*
         stage('Push Images') {
             steps {
                 sh """
@@ -59,10 +61,11 @@ pipeline {
             }
         }
 
+        */
         stage('Deploy') {
             steps {
                 sh """
-                    cd ${DEPLOY_DIR} && docker compose pull && docker compose up -d
+                    cd ${DEPLOY_DIR} && docker compose down && docker compose up -d
                 """
             }
         }
