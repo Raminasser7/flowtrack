@@ -9,6 +9,16 @@ import "./App.css";
 const API = process.env.REACT_APP_API_URL || "";
 
 export default function App() {
+  // ─── Theme ───────────────────────────────────────────────────────────────────
+  const [theme, setTheme] = useState(() => localStorage.getItem("ft-theme") || "dark");
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("ft-theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
+
   // ─── Auth State ─────────────────────────────────────────────────────────────
   const [token, setToken] = useState(() => localStorage.getItem("token") || null);
   const [username, setUsername] = useState(() => localStorage.getItem("username") || null);
@@ -16,6 +26,7 @@ export default function App() {
   // ─── App State ───────────────────────────────────────────────────────────────
   const [summary, setSummary] = useState({ total_income: 0, total_expense: 0, balance: 0 });
   const [transactions, setTransactions] = useState([]);
+  const [budgets, setBudgets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("dashboard");
 
@@ -29,17 +40,20 @@ export default function App() {
   const fetchData = useCallback(async () => {
     if (!token) return;
     try {
-      const [sumRes, txRes] = await Promise.all([
+      const [sumRes, txRes, budgetRes] = await Promise.all([
         fetch(`${API}/api/summary`, { headers: authHeaders() }),
         fetch(`${API}/api/transactions?limit=100`, { headers: authHeaders() }),
+        fetch(`${API}/api/budgets`, { headers: authHeaders() }),
       ]);
 
       if (sumRes.status === 401) { handleLogout(); return; }
 
       const sumData = await sumRes.json();
       const txData = await txRes.json();
+      const budgetData = await budgetRes.json();
       setSummary(sumData.summary);
       setTransactions(txData);
+      setBudgets(Array.isArray(budgetData) ? budgetData : []);
     } catch (err) {
       console.error("Fetch error:", err);
     } finally {
@@ -65,6 +79,7 @@ export default function App() {
     setUsername(null);
     setSummary({ total_income: 0, total_expense: 0, balance: 0 });
     setTransactions([]);
+    setBudgets([]);
     setLoading(true);
   };
 
@@ -127,6 +142,15 @@ export default function App() {
           </nav>
 
           <div className="header-user">
+            {/* Theme Toggle */}
+            <button
+              className="theme-toggle"
+              onClick={toggleTheme}
+              title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? "☀️" : "🌙"}
+            </button>
             <span className="user-badge">@{username}</span>
             <button className="logout-btn" onClick={handleLogout} title="Logout">⏻</button>
           </div>
@@ -134,7 +158,7 @@ export default function App() {
       </header>
 
       <main className="main">
-        {activeTab === "dashboard"    && <Dashboard summary={summary} transactions={transactions} />}
+        {activeTab === "dashboard"    && <Dashboard summary={summary} transactions={transactions} budgets={budgets} />}
         {activeTab === "transactions" && <TransactionList transactions={transactions} onDelete={handleDelete} />}
         {activeTab === "budgets"      && <BudgetManager token={token} />}
         {activeTab === "add"          && <AddTransaction onAdd={handleAdd} onSuccess={() => setActiveTab("dashboard")} />}
