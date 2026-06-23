@@ -27,9 +27,9 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
-                    sh """
-                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                    """
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    '''
                 }
             }
         }
@@ -62,9 +62,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh """
-                    cd ${DEPLOY_DIR}
-                    docker compose pull
-                    docker compose up -d
+                    cd ${DEPLOY_DIR} && docker compose pull && docker compose up -d
                 """
             }
         }
